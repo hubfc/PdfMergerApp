@@ -102,7 +102,8 @@ sendButton.addEventListener("click", () => {
             reader.readAsDataURL(file); // Liest die Datei als Data URL
         });
     });
-
+    //http://192.168.178.27:5001/upload
+    //http://192.168.178.53:30081/upload
     Promise.all(filePromises)
         .then(base64Files => {
             console.log('Base64 Files:', base64Files); // Überprüfen der konvertierten Base64-Daten

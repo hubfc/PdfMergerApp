@@ -1,3 +1,5 @@
+from PyPDF2 import PdfMerger
+
 def merge_pdfs(pdf_list, output_name):
     merger = PdfMerger()
     

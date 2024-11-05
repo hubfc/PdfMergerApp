@@ -4,6 +4,7 @@ const sendButton = document.getElementById("send-button");
 const downloadLink = document.getElementById("download-link");
 let draggedItem = null;
 let droppedFiles = []; // Array zum Speichern der hochgeladenen Dateien
+let originalFiles = []; // Array zum Speichern der Originaldateien
 
 // Drag and drop logic for the sortable list
 sortableList.addEventListener("dragstart", (e) => {
@@ -17,8 +18,26 @@ sortableList.addEventListener("dragend", (e) => {
     setTimeout(() => {
         draggedItem.classList.remove("dragging");
         draggedItem = null;
+        updateDroppedFiles();
     }, 0);
 });
+
+// Funktion zum Aktualisieren des droppedFiles-Arrays
+const updateDroppedFiles = () => {
+    droppedFiles = []; // Leere das Array
+    const items = sortableList.querySelectorAll("li"); // Hole alle li-Elemente
+
+    items.forEach(item => {
+        const fileName = item.textContent; // Hol den Dateinamen aus dem li-Element
+        const file = Array.from(originalFiles).find(f => f.name === fileName); // Finde die Datei im originalen Array
+
+        if (file) {
+            droppedFiles.push(file); // Füge die Datei zum Array hinzu
+        }
+    });
+
+    console.log('Aktualisierte Reihenfolge der Dateien:', droppedFiles); // Überprüfe die neue Reihenfolge
+};
 
 sortableList.addEventListener("dragover", (e) => {
     e.preventDefault();
@@ -39,18 +58,21 @@ dropArea.addEventListener("drop", (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
 
-    // Clear previous files
-    droppedFiles = []; 
-
+    // Clear previous files and add new files
     for (let i = 0; i < files.length; i++) {
         const li = document.createElement("li");
         li.textContent = files[i].name;
         li.setAttribute("draggable", true);
         sortableList.appendChild(li);
         
-        // Store the file in the droppedFiles array
-        droppedFiles.push(files[i]);
+        // Store the file in the droppedFiles array only if it is not already added
+        if (!droppedFiles.some(file => file.name === files[i].name)) {
+            droppedFiles.push(files[i]);
+            originalFiles.push(files[i]); // Füge die Datei auch zu originalFiles hinzu
+        }
     }
+
+    console.log('Dropped files:', droppedFiles); // Überprüfen, ob die Dateien korrekt gespeichert werden
 });
 
 // Get the element after which to insert the dragged item
@@ -83,6 +105,7 @@ sendButton.addEventListener("click", () => {
 
     Promise.all(filePromises)
         .then(base64Files => {
+            console.log('Base64 Files:', base64Files); // Überprüfen der konvertierten Base64-Daten
             return fetch('http://192.168.178.53:30081/upload', {
                 method: 'POST',
                 headers: {
@@ -98,10 +121,17 @@ sendButton.addEventListener("click", () => {
             return response.json(); // Hier erwarten wir jetzt JSON
         })
         .then(data => {
+            // Überprüfe, ob der Server eine Erfolgsnachricht zurückgegeben hat
+            if (data.error) {
+                console.error('Fehler:', data.error); // Fehler im Terminal ausgeben
+                alert(`Fehler: ${data.error}`); // Benutzer über den Fehler informieren
+                return; // Beende die Ausführung der Funktion, wenn ein Fehler aufgetreten ist
+            }
+        
             // Erstelle einen Download-Link für die erhaltene URL
             const url = data.download_link; // URL aus der JSON-Antwort
             downloadLink.href = url;
             downloadLink.style.display = 'block'; // Link sichtbar machen
+            alert('PDFs erfolgreich zusammengeführt!'); // Erfolgreiche Rückmeldung an den Benutzer
         })
-        .catch(error => console.error('Fehler beim Senden der Dokumente:', error));
 });

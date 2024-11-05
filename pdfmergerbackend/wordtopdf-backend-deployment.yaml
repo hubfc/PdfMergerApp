@@ -1,0 +1,36 @@
+# wordtopdf-backend-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pdfmergerbackend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pdfmergerbackend
+  template:
+    metadata:
+      labels:
+        app: pdfmergerbackend
+    spec:
+      containers:
+      - name: pdfmergerbackend
+        image: flofloroco/pdfmerger:backendv1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5001  # Port für Backend
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pdfmergerbackendservice
+spec:
+  selector:
+    app: pdfmergerbackend
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
+  type: ClusterIP  # Interner Zugriff innerhalb des Clusters

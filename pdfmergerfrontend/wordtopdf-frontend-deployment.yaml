@@ -1,0 +1,36 @@
+# wordtopdf-frontend-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pdfmergerfrontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pdfmergerfrontend
+  template:
+    metadata:
+      labels:
+        app: pdfmergerfrontend
+    spec:
+      containers:
+      - name: pdfmergerfrontend
+        image: flofloroco/pdfmerger:frontendv1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 81
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pdfmergerfrontendservice
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    app: pdfmergerfrontend
+  ports:
+    - protocol: TCP
+      port: 81
+      targetPort: 81
+      nodePort: 30081

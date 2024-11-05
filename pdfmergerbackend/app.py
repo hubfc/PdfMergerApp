@@ -60,12 +60,12 @@ def upload_files():
         'download_link': download_url
     }), 206 
 
-@app.route('/download/<filename>', methods=['GET'])
-def download_file(filename):
+@app.route('/download/merger.pdf', methods=['GET'])
+def download_file():
     # Erstelle den vollständigen Pfad zur Datei
-    file_path = os.path.join(tempfile.gettempdir(), filename)
+    file_path = os.path.join(tempfile.gettempdir(), 'merger.pdf')
     if os.path.exists(file_path):
-        response = send_file(file_path, as_attachment=True,attachment_filename=filename, mimetype='application/pdf')
+        response = send_file(file_path, as_attachment=True,attachment_filename='merger.pdf', mimetype='application/pdf')
         
         # Optional: Du kannst die Datei hier löschen, wenn du möchtest
         os.remove(file_path)  # Diese Zeile auskommentieren, um die Datei nach dem Download zu löschen.

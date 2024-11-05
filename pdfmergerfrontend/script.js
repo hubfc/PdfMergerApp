@@ -64,7 +64,7 @@ sendButton.addEventListener("click", () => {
     const documents = [...sortableList.children].map(item => item.textContent);
 
     // Hier wird eine Beispiel-URL verwendet. Ersetze sie durch die URL deines Backends.
-    fetch('http://10.43.30.210:5001/upload', {
+    fetch('http://192.168.178.53:30081/upload', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

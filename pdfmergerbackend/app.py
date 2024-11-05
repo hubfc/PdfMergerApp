@@ -49,7 +49,7 @@ def upload_files():
         return jsonify({'error': 'Zusammengeführte PDF-Datei wurde nicht erstellt'}), 502
 
     # Erstelle die URL für den Download der zusammengeführten PDF
-    download_url = f'http://{request.host}:30081/download/{os.path.basename(merged_pdf_path)}'
+    download_url = f'http://{request.host}:30081/download/'
     # Entferne die temporären Dateien (hier erst nach dem Download)
     for pdf_file in pdf_files:
         os.remove(pdf_file)
@@ -60,19 +60,19 @@ def upload_files():
         'download_link': download_url
     }), 206 
 
-@app.route('/download/merger.pdf', methods=['GET'])
-def download_file():
+@app.route('/download', methods=['GET'])
+def download_file(filename):
     # Erstelle den vollständigen Pfad zur Datei
-    file_path = os.path.join(tempfile.gettempdir(), 'merger.pdf')
+    file_path = os.path.join(tempfile.gettempdir(),'merged.pdf')
     if os.path.exists(file_path):
-        response = send_file(file_path, as_attachment=True,attachment_filename='merger.pdf', mimetype='application/pdf')
+        response = send_file(file_path, as_attachment=True,attachment_filename='merged.pdf')
         
         # Optional: Du kannst die Datei hier löschen, wenn du möchtest
         os.remove(file_path)  # Diese Zeile auskommentieren, um die Datei nach dem Download zu löschen.
         
         return response
     else:
-        return jsonify({'error': 'Datei nicht gefunden'}), 404
+        return jsonify({'error': 'Datei nicht gefunden'}), 406
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001)

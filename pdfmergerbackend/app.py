@@ -49,8 +49,7 @@ def upload_files():
         return jsonify({'error': 'Zusammengeführte PDF-Datei wurde nicht erstellt'}), 502
 
     # Erstelle die URL für den Download der zusammengeführten PDF
-    download_url = f'http://{request.host}:30081/download/{os.path.basename(merged_pdf_path)}'  # Angenommene Download-URL
-
+    download_url = f'http://{request.host}:30081/download/{os.path.basename(merged_pdf_path)}'
     # Entferne die temporären Dateien (hier erst nach dem Download)
     for pdf_file in pdf_files:
         os.remove(pdf_file)
@@ -66,7 +65,7 @@ def download_file(filename):
     # Erstelle den vollständigen Pfad zur Datei
     file_path = os.path.join(tempfile.gettempdir(), filename)
     if os.path.exists(file_path):
-        response = send_file(file_path, as_attachment=True)
+        response = send_file(file_path, as_attachment=True,attachment_filename=filename, mimetype='application/pdf')
         
         # Optional: Du kannst die Datei hier löschen, wenn du möchtest
         os.remove(file_path)  # Diese Zeile auskommentieren, um die Datei nach dem Download zu löschen.

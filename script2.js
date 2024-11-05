@@ -3,7 +3,6 @@ const sortableList = document.getElementById("sortable");
 const sendButton = document.getElementById("send-button");
 const downloadLink = document.getElementById("download-link");
 let draggedItem = null;
-let droppedFiles = []; // Array zum Speichern der hochgeladenen Dateien
 
 // Drag and drop logic for the sortable list
 sortableList.addEventListener("dragstart", (e) => {
@@ -38,18 +37,11 @@ dropArea.addEventListener("dragover", (e) => {
 dropArea.addEventListener("drop", (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
-
-    // Clear previous files
-    droppedFiles = []; 
-
     for (let i = 0; i < files.length; i++) {
         const li = document.createElement("li");
         li.textContent = files[i].name;
         li.setAttribute("draggable", true);
         sortableList.appendChild(li);
-        
-        // Store the file in the droppedFiles array
-        droppedFiles.push(files[i]);
     }
 });
 
@@ -69,39 +61,27 @@ const getDragAfterElement = (container, y) => {
 
 // Send documents to backend
 sendButton.addEventListener("click", () => {
-    const filePromises = droppedFiles.map(file => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                const base64String = reader.result.split(',')[1]; // Nur der Base64-Teil
-                resolve(base64String);
-            };
-            reader.onerror = reject;
-            reader.readAsDataURL(file); // Liest die Datei als Data URL
-        });
-    });
+    const documents = [...sortableList.children].map(item => item.textContent);
 
-    Promise.all(filePromises)
-        .then(base64Files => {
-            return fetch('http://192.168.178.53:30081/upload', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ files: base64Files }) // Sende die Base64-kodierten Dateien
-            });
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Netzwerkantwort war nicht ok: ' + response.statusText);
-            }
-            return response.json(); // Hier erwarten wir jetzt JSON
-        })
-        .then(data => {
-            // Erstelle einen Download-Link für die erhaltene URL
-            const url = data.download_link; // URL aus der JSON-Antwort
-            downloadLink.href = url;
-            downloadLink.style.display = 'block'; // Link sichtbar machen
-        })
-        .catch(error => console.error('Fehler beim Senden der Dokumente:', error));
+    // Hier wird eine Beispiel-URL verwendet. Ersetze sie durch die URL deines Backends.
+    fetch('http://192.168.178.53:30081/upload', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ files: documents })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Netzwerkantwort war nicht ok: ' + response.statusText);
+        }
+        return response.json(); // Hier erwarten wir jetzt JSON
+    })
+    .then(data => {
+        // Erstelle einen Download-Link für die erhaltene URL
+        const url = data.download_link; // URL aus der JSON-Antwort
+        downloadLink.href = url;
+        downloadLink.style.display = 'block'; // Link sichtbar machen
+    })
+    .catch(error => console.error('Fehler beim Senden der Dokumente:', error));
 });

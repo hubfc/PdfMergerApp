@@ -49,7 +49,7 @@ def upload_files():
         return jsonify({'error': 'Zusammengeführte PDF-Datei wurde nicht erstellt'}), 502
 
     # Erstelle die URL für den Download der zusammengeführten PDF
-    download_url = f'http://{request.host}:30081/download/'
+    download_url = f'http://{request.host}:30081/download'
     # Entferne die temporären Dateien (hier erst nach dem Download)
     for pdf_file in pdf_files:
         os.remove(pdf_file)

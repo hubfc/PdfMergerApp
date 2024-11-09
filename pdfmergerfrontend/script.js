@@ -107,7 +107,7 @@ sendButton.addEventListener("click", () => {
     Promise.all(filePromises)
         .then(base64Files => {
             console.log('Base64 Files:', base64Files); // Überprüfen der konvertierten Base64-Daten
-            return fetch('http://192.168.178.27:5001/upload', {
+            return fetch('http://192.168.178.53:30081/upload', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

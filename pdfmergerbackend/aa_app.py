@@ -30,7 +30,7 @@ def upload_files():
         return jsonify({'status': 'error', 'message': f'Fehler beim Zusammenführen der PDFs: {str(e)}'}), 500
 
     # Erstelle die Download-URL
-    download_url = generate_download_url(request.host,'')  
+    download_url = generate_download_url(request.host,'30081')  
 
     # Bereinige temporäre Dateien
     for pdf_file in pdf_files:

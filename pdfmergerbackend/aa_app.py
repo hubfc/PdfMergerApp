@@ -14,7 +14,7 @@ CORS(app)
 # Pfad für zusammengeführte pdfs
 merged_pdf_path = os.path.join(tempfile.gettempdir(), 'merged.pdf')
 
-@app.route('/upload', methods=['POST'])
+@app.route('/pdfmerger/upload', methods=['POST'])
 def upload_files():
 
     # Überprüfen und Verarbeiten der hochgeladenen Daten
@@ -30,7 +30,7 @@ def upload_files():
         return jsonify({'status': 'error', 'message': f'Fehler beim Zusammenführen der PDFs: {str(e)}'}), 500
 
     # Erstelle die Download-URL
-    download_url = generate_download_url(request.host,'30081')  
+    download_url = generate_download_url(request.host,'30080')  
 
     # Bereinige temporäre Dateien
     for pdf_file in pdf_files:
@@ -44,7 +44,7 @@ def upload_files():
     
 
 
-@app.route('/download', methods=['GET'])
+@app.route('/pdfmerger/download', methods=['GET'])
 def download_file():
 
     # Erstelle Pfad zur Datei

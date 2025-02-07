@@ -14,11 +14,11 @@ spec:
         app: pdfmergerfrontend
     spec:
       containers:
-      - name: pdfmergerfrontend
-        image: flofloroco/pdfmerger:frontendv1
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 81
+        - name: pdfmergerfrontend
+          image: flofloroco/pdfmerger:frontendv1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 81
 ---
 apiVersion: v1
 kind: Service
@@ -26,11 +26,10 @@ metadata:
   name: pdfmergerfrontendservice
   namespace: default
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: pdfmergerfrontend
   ports:
     - protocol: TCP
       port: 81
       targetPort: 81
-      nodePort: 30081

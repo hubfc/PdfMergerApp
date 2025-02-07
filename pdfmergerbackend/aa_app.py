@@ -41,7 +41,7 @@ def upload_files():
         'message': 'PDFs erfolgreich zusammengeführt',
         'download_link': download_url
     })
-    
+    # Code
 
 
 @app.route('/pdfmerger/download', methods=['GET'])

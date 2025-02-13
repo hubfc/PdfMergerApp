@@ -28,7 +28,6 @@ kubectl delete service pdfmergerbackendservice
 cd
 cd ./PdfMergerApp/pdfmergerbackend
 kubectl apply -f kube.yaml
-kubectl rollout status deployment/wordtopdfbackend
 
 cd
 cd ./PdfMergerApp/pdfmergerfrontend

@@ -1,0 +1,36 @@
+cd
+cd ./PdfMergerApp
+git pull origin main #Funktioniert per ssh
+
+# Docker images erstellen:
+cd
+cd ./PdfMergerApp/pdfmergerbackend
+docker build --no-cache -t flofloroco/pdfmerger:backendv1 .
+
+cd
+cd ./PdfMergerApp/pdfmergerfrontend
+docker build --no-cache -t flofloroco/pdfmerger:frontendv1 .
+
+docker builder prune #cache leeren
+
+#Image ins Dockerhub laden
+docker push flofloroco/pdfmerger:backendv1 
+docker push flofloroco/pdfmerger:frontendv1
+
+
+#Container in Kubenetes initialisieren
+kubectl delete deployment pdfmergerfrontend
+kubectl delete service pdfmergerfrontendservice
+
+kubectl delete deployment pdfmergerbackend
+kubectl delete service pdfmergerbackendservice
+
+cd
+cd ./PdfMergerApp/pdfmergerbackend
+kubectl apply -f kube.yaml
+kubectl rollout status deployment/wordtopdfbackend
+
+cd
+cd ./PdfMergerApp/pdfmergerfrontend
+kubectl apply -f kube.yaml
+kubectl rollout status deployment/wordtopdffrontend

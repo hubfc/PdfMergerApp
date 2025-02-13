@@ -14,4 +14,4 @@ RUN pip install --upgrade pip && \
 COPY . .
 
 EXPOSE 5001
-CMD ["python", "app.py"]
+CMD ["python", "aa_app.py"]
